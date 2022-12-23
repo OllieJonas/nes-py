@@ -10,23 +10,23 @@ def _get_args():
     parser = argparse.ArgumentParser(description=__doc__)
     # add the argument for the Super Mario Bros environment to run
     parser.add_argument('--rom', '-r',
-        type=str,
-        help='The path to the ROM to play.',
-        required=True,
-    )
+                        type=str,
+                        help='The path to the ROM to play.',
+                        required=True,
+                        )
     # add the argument for the mode of execution as either human or random
     parser.add_argument('--mode', '-m',
-        type=str,
-        default='human',
-        choices=['human', 'random'],
-        help='The execution mode for the emulation.',
-    )
+                        type=str,
+                        default='human',
+                        choices=['human', 'random'],
+                        help='The execution mode for the emulation.',
+                        )
     # add the argument for the number of steps to take in random mode
     parser.add_argument('--steps', '-s',
-        type=int,
-        default=500,
-        help='The number of random steps to take.',
-    )
+                        type=int,
+                        default=500,
+                        help='The number of random steps to take.',
+                        )
     return parser.parse_args()
 
 
