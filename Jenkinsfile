@@ -31,6 +31,7 @@ pipeline {
 
                 TARGET_DIR = "/home/ollie/Projects/Dissertation/${PROJECT_NAME}"
                 PYTHON_PACKAGES_DIR = "/home/ollie/Projects/python-packages"
+                PYPI_DOCKER_CONTAINER_NAME = "PyPIServer"
             }
             steps {
                 script {
@@ -49,6 +50,10 @@ pipeline {
                         tar -xf ${env.DEPLOY_DIR_NAME}
                         python3 setup.py sdist
                         mv dist/* ${PYTHON_PACKAGES_DIR}
+
+                        docker stop ${PYPI_DOCKER_CONTAINER_NAME}
+                        docker rm ${PYPI_DOCKER_CONTAINER_NAME}
+                        docker run --name ${PYPI_DOCKER_CONTAINER_NAME} --detach --publish 8090:8080 --volume ${PYTHON_PACKAGES_DIR}:/data/packages pypiserver/pypiserver:latest
                         exit
                         EOF
                     """
