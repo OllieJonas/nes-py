@@ -22,6 +22,8 @@
 [python-version]: https://img.shields.io/pypi/pyversions/nes-py.svg
 [python-home]: https://python.org
 
+This is not my own work!! This is a fork of Kautenja's nes-py. The only modifications made are to upgrade it to the latest version of gym (0.26.2), which has breaking changes to it.
+
 nes-py is an NES emulator and OpenAI Gym interface for MacOS, Linux, and
 Windows based on the [SimpleNES](https://github.com/amhndu/SimpleNES) emulator.
 
