@@ -29,7 +29,7 @@ pipeline {
                 DEPLOY_SERVER_URL = "olliejonas.com"
                 DEPLOY_SERVER_USER = "root"
 
-                TARGET_DIR = "/home/ollie/Projects/Dissertation/"
+                TARGET_DIR = "/home/ollie/Projects/Dissertation/${PROJECT_NAME}"
                 PYTHON_PACKAGES_DIR = "/home/ollie/Projects/python-packages"
                 PYPI_DOCKER_CONTAINER_NAME = "PyPIServer"
             }
@@ -48,9 +48,8 @@ pipeline {
                         ssh -t -t ${env.DEPLOY_SERVER} << EOF
                         cd ${env.TARGET_DIR}
                         tar -xf ${env.DEPLOY_DIR_NAME}.tar.gz
-                        python3 ${env.DEPLOY_DIR_NAME}/setup.py sdist
-                        ls -l ${env.DEPLOY_DIR_NAME}/dist/
-                        mv ${env.DEPLOY_DIR_NAME}/dist/* ${PYTHON_PACKAGES_DIR}
+                        python3 setup.py sdist
+                        mv dist/* ${PYTHON_PACKAGES_DIR}
                         rm -f ${env.DEPLOY_DIR_NAME}.tar.gz
 
                         docker stop ${PYPI_DOCKER_CONTAINER_NAME}
