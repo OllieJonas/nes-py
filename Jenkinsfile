@@ -48,9 +48,9 @@ pipeline {
                         ssh -t -t ${env.DEPLOY_SERVER} << EOF
                         cd ${env.TARGET_DIR}
                         tar -xf ${env.DEPLOY_DIR_NAME}.tar.gz
-                        python3 setup.py sdist
+                        python3 ${env.DEPLOY_DIR_NAME}/setup.py sdist
                         mv ${env.DEPLOY_DIR_NAME}/dist/* ${PYTHON_PACKAGES_DIR}
-                        rm -f${env.DEPLOY_DIR_NAME}.tar.gz
+                        rm -f ${env.DEPLOY_DIR_NAME}.tar.gz
 
                         docker stop ${PYPI_DOCKER_CONTAINER_NAME}
                         docker rm ${PYPI_DOCKER_CONTAINER_NAME}
