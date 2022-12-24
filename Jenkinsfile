@@ -29,7 +29,7 @@ pipeline {
                 DEPLOY_SERVER_URL = "olliejonas.com"
                 DEPLOY_SERVER_USER = "root"
 
-                TARGET_DIR = "/home/ollie/Projects/Dissertation/${PROJECT_NAME}"
+                TARGET_DIR = "/home/ollie/Projects/Dissertation/"
                 PYTHON_PACKAGES_DIR = "/home/ollie/Projects/python-packages"
                 PYPI_DOCKER_CONTAINER_NAME = "PyPIServer"
             }
