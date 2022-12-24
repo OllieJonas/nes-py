@@ -3,16 +3,13 @@ import os
 from glob import glob
 from setuptools import setup, find_packages, Extension
 
-
 # set the compiler for the C++ framework
 os.environ['CC'] = 'g++'
 os.environ['CCX'] = 'g++'
 
-
 # read the contents from the README file
-with open('README.md') as README_file:
+with open('nes-py/README.md') as README_file:
     README = README_file.read()
-
 
 # The prefix name for the .so library to build. It will follow the format
 # lib_nes_env.*.so where the * changes depending on the build system
@@ -29,16 +26,15 @@ INCLUDE_DIRS = ['nes_py/nes/include']
 EXTRA_COMPILE_ARGS = ['-std=c++1y', '-pipe', '-O3']
 # The official extension using the name, source, headers, and build args
 LIB_NES_ENV = Extension(LIB_NAME,
-    sources=SOURCES,
-    include_dirs=INCLUDE_DIRS,
-    extra_compile_args=EXTRA_COMPILE_ARGS,
-)
-
+                        sources=SOURCES,
+                        include_dirs=INCLUDE_DIRS,
+                        extra_compile_args=EXTRA_COMPILE_ARGS,
+                        )
 
 setup(
     name='nes_py',
     version='8.2.2',
-    description='A fork of Kautenja\'s NES Emulator and OpenAI Gym interface',
+    description='A fork of Kautenja\'s NES Emulator and OpenAI Gym interface.',
     long_description=README,
     long_description_content_type='text/markdown',
     keywords='NES Emulator OpenAI-Gym',
