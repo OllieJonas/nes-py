@@ -146,8 +146,10 @@ class NESEnv(gym.Env):
         self.viewer = None
         # setup a placeholder for a pointer to a backup state
         self._has_backup = False
-        # setup a done flag
-        self.done = True
+        # setup a terminated flag
+        self.terminated = True
+        # setup a truncated flag
+        self.truncated = True
         # setup the controllers, screen, and RAM buffers
         self.controllers = [self._controller_buffer(port) for port in range(2)]
         self.screen = self._screen_buffer()
@@ -268,8 +270,10 @@ class NESEnv(gym.Env):
             _LIB.Reset(self._env)
         # call the after reset callback
         self._did_reset()
-        # set the done flag to false
-        self.done = False
+        # set the terminated flag to false
+        self.terminated = False
+        # set the truncated flag to false
+        self.truncated = False
         # return the screen from the emulator and info
         return self.screen, self._get_info()
 
@@ -293,7 +297,7 @@ class NESEnv(gym.Env):
 
         """
         # if the environment is done, raise an error
-        if self.done:
+        if self.terminated or self.truncated:
             raise ValueError('cannot step in a done environment! call `reset`')
         # set the action on the controller
         self.controllers[0][:] = action
@@ -301,19 +305,21 @@ class NESEnv(gym.Env):
         _LIB.Step(self._env)
         # get the reward for this step
         reward = float(self._get_reward())
-        # get the done flag for this step
-        self.done = bool(self._get_terminated())
+        # get the terminated flag for this step
+        self.terminated = bool(self._get_terminated())
+        # get the truncated flag for this step
+        self.truncated = bool(self._get_truncated())
         # get the info for this step
         info = self._get_info()
         # call the after step callback
-        self._did_step(self.done)
+        self._did_step(self.terminated)
         # bound the reward in [min, max]
         if reward < self.reward_range[0]:
             reward = self.reward_range[0]
         elif reward > self.reward_range[1]:
             reward = self.reward_range[1]
         # return the screen from the emulator and other relevant data
-        return self.screen, reward, self.done, False, info
+        return self.screen, reward, self.terminated, self.truncated, info
 
     def _get_reward(self):
         """Return the reward after a step occurs."""
