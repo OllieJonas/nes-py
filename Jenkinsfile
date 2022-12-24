@@ -47,7 +47,7 @@ pipeline {
 
                         ssh -t -t ${env.DEPLOY_SERVER} << EOF
                         cd ${env.TARGET_DIR}
-                        tar -xf ${env.DEPLOY_DIR_NAME}
+                        tar -xf ${env.DEPLOY_DIR_NAME}.tar.gz
                         python3 setup.py sdist
                         mv dist/* ${PYTHON_PACKAGES_DIR}
 
