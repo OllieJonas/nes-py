@@ -6,6 +6,12 @@ pipeline {
     }
 
     stages {
+        stage('Add shebang for interactive shell...') {
+            steps {
+                sh '''#!/bin/bash -i
+                '''
+            }
+        }
         stage('Build') {
             steps {
                 echo "Building ${env.PROJECT_NAME} on ${env.JENKINS_URL}..."
