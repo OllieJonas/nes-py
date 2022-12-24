@@ -49,7 +49,8 @@ pipeline {
                         cd ${env.TARGET_DIR}
                         tar -xf ${env.DEPLOY_DIR_NAME}.tar.gz
                         python3 setup.py sdist
-                        mv dist/* ${PYTHON_PACKAGES_DIR}
+                        mv ${env.DEPLOY_DIR_NAME}/dist/* ${PYTHON_PACKAGES_DIR}
+                        rm -f${env.DEPLOY_DIR_NAME}.tar.gz
 
                         docker stop ${PYPI_DOCKER_CONTAINER_NAME}
                         docker rm ${PYPI_DOCKER_CONTAINER_NAME}
