@@ -10,7 +10,6 @@ pipeline {
             steps {
                 echo "Building ${env.PROJECT_NAME} on ${env.JENKINS_URL}..."
                 sh "mkdir ${env.DEPLOY_DIR_NAME}"
-                sh "zsh --version"
                 sh "bash --version"
                 sh "shopt -s extglob"
                 sh "mv !(${env.DEPLOY_DIR_NAME}) ${env.DEPLOY_DIR_NAME}"
