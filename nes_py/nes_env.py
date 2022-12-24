@@ -4,6 +4,8 @@ import glob
 import itertools
 import os
 import sys
+from typing import Optional
+
 import gym
 from gym.spaces import Box
 from gym.spaces import Discrete
@@ -103,7 +105,7 @@ class NESEnv(gym.Env):
     # action space is a bitmap of button press values for the 8 NES buttons
     action_space = Discrete(256)
 
-    def __init__(self, rom_path):
+    def __init__(self, rom_path, render_mode: Optional[str] = None):
         """
         Create a new NES environment.
 
@@ -137,6 +139,7 @@ class NESEnv(gym.Env):
         self.np_random = np.random.RandomState()
         # store the ROM path
         self._rom_path = rom_path
+        self.render_mode = render_mode
         # initialize the C++ object for running the environment
         self._env = _LIB.Initialize(self._rom_path)
         # setup a placeholder for a 'human' render mode viewer
@@ -223,7 +226,7 @@ class NESEnv(gym.Env):
         """Handle any RAM hacking after a reset occurs."""
         pass
 
-    def seed(self, seed=None):
+    def _seed(self, seed=None):
         """
         Set the seed for this environment's random number generator.
 
@@ -243,21 +246,19 @@ class NESEnv(gym.Env):
         # return the list of seeds used by RNG(s) in the environment
         return [seed]
 
-    def reset(self, seed=None, options=None, return_info=None):
+    def reset(self, seed=None, options=None):
         """
         Reset the state of the environment and returns an initial observation.
 
         Args:
             seed (int): an optional random number seed for the next episode
             options (any): unused
-            return_info (any): unused
-
         Returns:
             state (np.ndarray): next frame as a result of the given action
 
         """
         # Set the seed.
-        self.seed(seed)
+        self._seed(seed)
         # call the before reset callback
         self._will_reset()
         # reset the emulator
@@ -269,8 +270,8 @@ class NESEnv(gym.Env):
         self._did_reset()
         # set the done flag to false
         self.done = False
-        # return the screen from the emulator
-        return self.screen
+        # return the screen from the emulator and info
+        return self.screen, self._get_info()
 
     def _did_reset(self):
         """Handle any RAM hacking after a reset occurs."""
@@ -301,7 +302,7 @@ class NESEnv(gym.Env):
         # get the reward for this step
         reward = float(self._get_reward())
         # get the done flag for this step
-        self.done = bool(self._get_done())
+        self.done = bool(self._get_terminated())
         # get the info for this step
         info = self._get_info()
         # call the after step callback
@@ -312,14 +313,17 @@ class NESEnv(gym.Env):
         elif reward > self.reward_range[1]:
             reward = self.reward_range[1]
         # return the screen from the emulator and other relevant data
-        return self.screen, reward, self.done, info
+        return self.screen, reward, self.done, False, info
 
     def _get_reward(self):
         """Return the reward after a step occurs."""
         return 0
 
-    def _get_done(self):
+    def _get_terminated(self):
         """Return True if the episode is over, False otherwise."""
+        return False
+
+    def _get_truncated(self):
         return False
 
     def _get_info(self):
@@ -352,21 +356,23 @@ class NESEnv(gym.Env):
         if self.viewer is not None:
             self.viewer.close()
 
-    def render(self, mode='human'):
+    def render(self):
         """
         Render the environment.
-
-        Args:
-            mode (str): the mode to render with:
-            - human: render to the current display
-            - rgb_array: Return an numpy.ndarray with shape (x, y, 3),
-              representing RGB values for an x-by-y pixel image
 
         Returns:
             a numpy array if mode is 'rgb_array', None otherwise
 
         """
-        if mode == 'human':
+        if self.render_mode is None:
+            caption = self._rom_path.split('/')[-1]  # get caption early for warning.
+            gym.logger.warn("You're calling the render method without specifying a render_mode. "
+                            "Please specify the render_mode at initialisation. "
+                            f'For example, gym.make("{caption}", render_mode="rgb_array")'
+                            )
+            return
+
+        elif self.render_mode == 'human':
             # if the viewer isn't setup, import it and create one
             if self.viewer is None:
                 # get the caption for the ImageViewer
@@ -384,7 +390,7 @@ class NESEnv(gym.Env):
                 )
             # show the screen on the image viewer
             self.viewer.show(self.screen)
-        elif mode == 'rgb_array':
+        elif self.render_mode == 'rgb_array':
             return self.screen
         else:
             # unpack the modes as comma delineated strings ('a', 'b', ...)
