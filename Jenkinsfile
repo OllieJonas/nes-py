@@ -8,11 +8,10 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                script {
-                    env.WORKING_DIR = sh(script: "pwd -P", returnStdout: true)
-                }
-                echo "Building ${env.PROJECT_NAME} on ${env.JENKINS_URL}... (Working Dir: ${env.DEPLOY_DIR})"
+                echo "Building ${env.PROJECT_NAME} on ${env.JENKINS_URL}..."
                 sh "mkdir ${env.DEPLOY_DIR_NAME}"
+                sh "bash --version"
+                sh "zsh --version"
                 sh "shopt -s extglob"
                 sh "mv !(${env.DEPLOY_DIR_NAME}) ${env.DEPLOY_DIR_NAME}"
                 sh "tar -czvf ${env.PROJECT_NAME}.tar.gz ${env.DEPLOY_DIR_NAME}"
