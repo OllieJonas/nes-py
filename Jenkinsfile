@@ -49,6 +49,7 @@ pipeline {
                         cd ${env.TARGET_DIR}
                         tar -xf ${env.DEPLOY_DIR_NAME}.tar.gz
                         python3 ${env.DEPLOY_DIR_NAME}/setup.py sdist
+                        ls -l ${env.DEPLOY_DIR_NAME}/dist/
                         mv ${env.DEPLOY_DIR_NAME}/dist/* ${PYTHON_PACKAGES_DIR}
                         rm -f ${env.DEPLOY_DIR_NAME}.tar.gz
 
