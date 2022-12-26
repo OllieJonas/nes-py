@@ -312,7 +312,7 @@ class NESEnv(gym.Env):
         # get the info for this step
         info = self._get_info()
         # call the after step callback
-        self._did_step(self.terminated)
+        self._did_step(self.terminated, self.truncated)
         # bound the reward in [min, max]
         if reward < self.reward_range[0]:
             reward = self.reward_range[0]
@@ -336,13 +336,9 @@ class NESEnv(gym.Env):
         """Return the info after a step occurs."""
         return {}
 
-    def _did_step(self, done):
+    def _did_step(self, terminated, truncated):
         """
         Handle any RAM hacking after a step occurs.
-
-        Args:
-            done (bool): whether the done flag is set to true
-
         Returns:
             None
 
