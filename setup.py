@@ -8,7 +8,7 @@ os.environ['CC'] = 'g++'
 os.environ['CCX'] = 'g++'
 
 # read the contents from the README file
-with open('nes-py/README.md') as README_file:
+with open('README.md') as README_file:
     README = README_file.read()
 
 # The prefix name for the .so library to build. It will follow the format
